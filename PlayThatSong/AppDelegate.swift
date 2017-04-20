@@ -40,7 +40,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
+    
+    func beginBackgroundTask() -> UIBackgroundTaskIdentifier {
+        return UIApplication.sharedApplication().beginBackgroundTaskWithExpirationHandler({})
+    }
+    
+    func endBackgroundTask(waitForReply: UIBackgroundTaskIdentifier) {
+        UIApplication.sharedApplication().endBackgroundTask(waitForReply)
+    }
+    
+    func application(application: UIApplication, handleWatchKitExtensionRequest userInfo: [NSObject : AnyObject]?, reply: (([NSObject : AnyObject]!) -> Void)!) {
 
+        let waitForReply = self.beginBackgroundTask()
+        
+        let watchKitInformation = WatchKitInfo(playerDictionary: userInfo!, reply: reply)
+        NSNotificationCenter.defaultCenter().postNotificationName("WatchKitDidMakeRequest", object: watchKitInformation)
+        
+        println(reply)
+        
+        reply(["test" : "test"])
+        
+        self.endBackgroundTask(waitForReply)
+        
+        }
 
 }
 
